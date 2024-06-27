@@ -1,5 +1,6 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "hacapifisd"
+compatibility_flags = [ "nodejs_compat" ]
 main = "src/index.js"
 compatibility_date = "2024-06-20"
 

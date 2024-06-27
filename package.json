@@ -10,5 +10,8 @@
   "devDependencies": {
     "itty-router": "^3.0.12",
     "wrangler": "^3.60.3"
+  },
+  "dependencies": {
+    "node-fetch-cookies": "^2.1.1"
   }
 }
