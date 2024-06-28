@@ -2,7 +2,7 @@ import { fetch } from "node-fetch-cookies";
 import jsdom from "jsdom"
 const { JSDOM } = jsdom;
 
-async function getGrades(stuff, cookies) {
+export const getGrades = async(stuff, cookies) => {
 
     let returnDataArray = [];
 
@@ -70,13 +70,70 @@ async function getGrades(stuff, cookies) {
 export async function getClasses(cookies) {
     let quarters = []
     for (let i = 1; i < 5; i++) {
+        const payload = {
+            "__EVENTTARGET": "ctl00$plnMain$btnRefreshView",
+            "__EVENTARGUMENT": "",
+            "__VIEWSTATE": "OSrbqE1ZtKhFPBzxrPCyscRBy8KuvIF6VZTm0SKVmgOpG4u+0KsuNC4xKzTjRQ1F+tbLRFpI5JLLTfWwYo5/7InRZzSCnQlEcdZd+33PktJlhhe2XiNorSTwHi36mWnybbP46PHBFh8GiVViL0pdeVpuA0q/Iil2Wec0t8GgWMamSUwJpX0+Uh1MqV5hCSuJMWbsRuL4t0V2dOQ2f48+ZH2ZPPijeSM2H8b9/+Y7xkCWq+tltVpKZ1S7YNM3sDGbSrs74x+qkce7gr3wen1LUTnugQH862/HAY9MIALfeX6KzDmF1VItmp5M/9eC18t9qIReYoi5o/7qNMvS66giQ0c+376d2ETgE79y7PaaVfr96k3MfNy3rCFvaSCCfyqzmZ9l1/pUfNURz2tUEIoWY5GiILgUe2Wr/vn5dv72enQx3p/MKrAf37GVM16uj/pm5zf1QWInhdVbSb1ouct0u93RkXkxZgRS6js0HuBD2u+vR2+32YritIeFtdiGCXqWoedq6NJFLC9+UFOT35s8pvlbLK40gguQZi0DeRsQq3nMQgN6caWNFBjY4LlUWz5e5wQ0HE3u65lL47JFHKXl1vqbYBdgMLir3x/FDfZL6I3dHYZib1dMM3Q8K/3v/OaeaJ8KirV8D9Yvz1B864vZk7fiO8OTvZ5tfXZukU8jKmsWbkRMP5eq43/ARfpVVU2JSFQJQw1uXfDrXu9+81MKZIIitTRyafIbjo2adIQQ1QggHK8AbxIKw678uscovgRgBfWhY17tpiaVGMiUXRQUA4QXUyQA1O3qbfRerm4O/Evy34i+SBcTFckOFi2ytausPZTtgTTtdVww1AnhuCly75my//DdLhRpy7vCdHdaclRq35EnbfgWAQvQq+wvuwb594oXByIsf1E51iAFHYqcech0lyn6o/vLLvpg5hWBQAgTNZdNZz7IdIfesSaairVEhGyGQd05eUEKXXT2i8f7+Bq38GNjgHcKiyLdernjC8k/9w7ugdswFXUf95b/TBkrNs4wq9bFPQVMzW/rm4cc76cm5k2sIKsecg3B55M1ppF9qxHd4bJBHFViUbZN+DbVLMobGsR4sx0CckpoyxszYNo19kjzaP0p+jrgCxEHS8ipNUZY6+VFLIKGHeXaPXSsfEo2/Tz5+q0QTMtxZZqMhwCviLq5WhW68V0v+hnzIxBnXQipApkVblgkIN8HLg/uF0BGFxiYMeX6qe4khjL2YMbUzP731Ysp+NwireEX+d40eElh4ElYFy897de0wX+68dZhnKeKmqkMDFXaA9dW3wtF+p8/CSxaPK8DYAlmEbhbOgw+fX4HXzTFFWDbg6KH7K/sfC/jKvZh77AKQr/fl3WLIfIksoQ4w2k9bAmCewAEZeVUwBReBH4HU3WW6RzkUjfnbQWi9w5g8CsfkTWQZjXvrl1Lt6G3063AnH+uiQkxIMbyNOusseMzqheW5lOlY6c0qyrhgg2G53Ex5REYu1cR/Ha4JX9qTTjHL6sdv6w=",
+            "__VIEWSTATEGENERATOR": "B0093F3C",
+            "__EVENTVALIDATION": "V4iA6b3yrU5FjXbARbksovHtJ7A8gGO+GO6cGpp9JQsI3MRIQ6C5ipmBM80keXq/bzUnodHgBnLDIr/i2XjKNMiqKM/ys1rwvDbKi8PeQaeya9Vz5OMIKCfBWftesZak3UVwl25YDTjhTnYBySqhS++hTm1xocgBpfRN0PLz+i3hsflOPg3HXfXDi15vkY+Wq1ODbEGGeJY72/vrzaWz+MudaLV+Q+altDL8Jt7CtkcelJThAc+U7/aVjsjzQXKZrXuqjd9Xi31BEtVC/W+DrQCPjobwxyM+eMZBfjASgV1mV1Mi8a7/P4tGaGwpMYjPuNAzU7Lhc/ahZrPxChn1gLr2SnxYiCNreDnfdOwZiVrz7gebnwGIApLHtXtlC0pRbjuZYz8pPg0EHxbQXhyvAmHNGIpR8a/08LCRg/Id9X03yLwDE1kbJbxxReli38wdGeECqUXo+r8hN6NtDvcl0WWtOpVx0MTHwEKN9brMMxkxKjHrwieWvqvm0U7QjtnEVFIOHZcdkpknZItgHO+qrIGfxbQmcgUAXt3EBFcGcjh/aQTgm99rGBDpgNBt8Jt8AYaz35k9pq13gcmpliK5SldXIz2B4p+wdzQ0IZwoSCP8TtEFwLOuwAPWs9fOIVKgXP815FxIHU9fR2CmrBMw//XFqkSejkcwuYf6B4mcWKHtJOAAb10eZ5T89hzpG0ELn+TLqoXCV48jo1J1qOlOr9itwi09hcQyJ7fXbiwj+3UoFvGzFdV2ngKlBTHlZBl9fQzLUxaSZnRrOZ1GS0OkdIOWTFZCYgHbdW5ZWNiljbnsVXSFv0WaDwkG0NS5Ga7CjU4L733E1W7+1lmG0iBvkIcyib1kUbZ3fl5AZWP7Zxr/rvaeH2uxKHbG27u12oaxBXCzwQMDfC8HILIdrgFaJSz/eqIuDSpVBmYAQCBM8IQ6+mDAP3rJqQ+KEJPAggHutc9U4f0Gnlg3Psq5GPw95fG+OHcoa1B31xheVbWsKrUhTaAgJnI6bJ5FqbNJuEocDGnw6MXACj29/C7iuCd6UiMY0tt1z9wTVbM6z4WZGwIyqAcBA6a99RCZ8nvTJIOSzFrpgmuvNWErTMxmnFP8q/6PByKxVvnfaHP2A/9jpwMlvY0s4xc+YQ8gsXVN+PWf/q4MdvCFX+D40q0FuOmB68fMR62Yho1nra4qTshdaT0jv8M7gFUa42mtjbw4NlS+MW5Vwr8w0O3lNTFKToP9AMiXFo8RYKTe8fANij7P1PnB+Ar410nMr6gpHUPTtxWqtoI4oshI2QQGZK+LylTqEdblFlZY4DP/vYG3KAFyMuZvmPtp6WOWeq/OtxBg4PfT/UV6xHxwgafxZScN8p8aAEGBxSGovEQj1Mtkhu9egGvZg/QWgZZLlLQITatP5wGkLdn0N8EwJMjeehLzAxm/4BeK2oH7IN6UleuPUb3Aev8nCJFKen0Wp4RdbJir05mxShnq4YzaQuqWxW9U/gEoclO2ktL2YpJjXXtBp/7EqxXgfSa+4lnUUq2tsKgK81COJuQb4XwMpNjFuB1DwqCpUQ==",
+            "ctl00$plnMain$hdnValidMHACLicense": "Y",
+            "ctl00$plnMain$hdnIsVisibleClsWrk": "N",
+            "ctl00$plnMain$hdnIsVisibleCrsAvg": "N",
+            "ctl00$plnMain$hdnJsAlert": "Averages+cannot+be+displayed+when++Report+Card+Run+is+set+to+(All+Runs).",
+            "ctl00$plnMain$hdnTitle": "Classwork",
+            "ctl00$plnMain$hdnLastUpdated": "Last+Updated",
+            "ctl00$plnMain$hdnDroppedCourse": "+This+course+was+dropped+as+of+",
+            "ctl00$plnMain$hdnddlClasses": "(All+Classes)",
+            "ctl00$plnMain$hdnddlCompetencies": "(All+Classes)",
+            "ctl00$plnMain$hdnCompDateDue": "Date+Due",
+            "ctl00$plnMain$hdnCompDateAssigned": "Date+Assigned",
+            "ctl00$plnMain$hdnCompCourse": "Course",
+            "ctl00$plnMain$hdnCompAssignment": "Assignment",
+            "ctl00$plnMain$hdnCompAssignmentLabel": "Assignments+Not+Related+to+Any+Competency",
+            "ctl00$plnMain$hdnCompNoAssignments": "No+assignments+found",
+            "ctl00$plnMain$hdnCompNoClasswork": "Classwork+could+not+be+found+for+this+competency+for+the+selected+report+card+run.",
+            "ctl00$plnMain$hdnCompScore": "Score",
+            "ctl00$plnMain$hdnCompPoints": "Points",
+            "ctl00$plnMain$hdnddlReportCardRuns1": "(All+Runs)",
+            "ctl00$plnMain$hdnddlReportCardRuns2": "(All+Terms)",
+            "ctl00$plnMain$hdnbtnShowAverage": "Show+All+Averages",
+            "ctl00$plnMain$hdnShowAveragesToolTip": "Show+all+student's+averages",
+            "ctl00$plnMain$hdnPrintClassworkToolTip": "Print+all+classwork",
+            "ctl00$plnMain$hdnPrintClasswork": "Print+Classwork",
+            "ctl00$plnMain$hdnCollapseToolTip": "Collapse+all+courses",
+            "ctl00$plnMain$hdnCollapse": "Collapse+All",
+            "ctl00$plnMain$hdnFullToolTip": "Switch+courses+to+Full+View",
+            "ctl00$plnMain$hdnViewFull": "Full+View",
+            "ctl00$plnMain$hdnQuickToolTip": "Switch+courses+to+Quick+View",
+            "ctl00$plnMain$hdnViewQuick": "Quick+View",
+            "ctl00$plnMain$hdnExpand": "Expand+All",
+            "ctl00$plnMain$hdnExpandToolTip": "Expand+all+courses",
+            "ctl00$plnMain$hdnChildCompetencyMessage": "This+competency+is+calculated+as+an+average+of+the+following+competencies",
+            "ctl00$plnMain$hdnCompetencyScoreLabel": "Grade",
+            "ctl00$plnMain$hdnAverageDetailsDialogTitle": "Average+Details",
+            "ctl00$plnMain$hdnAssignmentCompetency": "Assignment+Competency",
+            "ctl00$plnMain$hdnAssignmentCourse": "Assignment+Course",
+            "ctl00$plnMain$hdnTooltipTitle": "Title",
+            "ctl00$plnMain$hdnCategory": "Category",
+            "ctl00$plnMain$hdnDueDate": "Due+Date",
+            "ctl00$plnMain$hdnMaxPoints": "Max+Points",
+            "ctl00$plnMain$hdnCanBeDropped": "Can+Be+Dropped",
+            "ctl00$plnMain$hdnHasAttachments": "Has+Attachments",
+            "ctl00$plnMain$hdnExtraCredit": "Extra+Credit",
+            "ctl00$plnMain$hdnType": "Type",
+            "ctl00$plnMain$hdnAssignmentDataInfo": "Information+could+not+be+found+for+the+assignment",
+            "ctl00$plnMain$ddlReportCardRuns": `{quarter}-2024`,
+            "ctl00$plnMain$ddlClasses": "ALL",
+            "ctl00$plnMain$ddlCompetencies": "ALL",
+            "ctl00$plnMain$ddlOrderBy": "Class"
+        }
         const stuff = {
             "headers": {
                 "content-type": "application/x-www-form-urlencoded",
                 "Referer": "https://hac.friscoisd.org/HomeAccess/Content/Student/Assignments.aspx",
                 "Referrer-Policy": "strict-origin-when-cross-origin"
             },
-            "body": `__EVENTTARGET=ctl00%24plnMain%24btnRefreshView&__VIEWSTATE=izE0bU531pACyhgVVnbEHJkW%2BpPy4i4ZvpKe7bSEP5HQwQ%2FfYbGJH37Lvlkaaxsf929y7%2BK%2F3DJmn0AbQPb6djXhUEVzFkqBU%2FZHZRHdVaORVHwZi%2FLHnNgkD0kJ3hWYjvNFAcXq3PyrU0t4bEUxze%2FBjn9%2BMxDrZej50bQ4ecx2TEjuog0ZUiFGW001TD8XUP9n8stMIsZ7ibLk5J4oB7kTekGxVBO9SkDi4RBGjkDTsc2UYCY9I6EYU2qS7IadCRQM0S4WWl4GFzlPJ6gDPJtICOmpMnRx1gw25kTt3kUu4Rp88B8AgRncFwxzar35zF%2BOCC%2FSJVZ6eWszwrvhuHYDQDHjc6iX%2B68Skb4YvP3x%2BTOo%2FBBXQRpJ1JH7w5hLKz1KrocHKgNLSn%2F%2BrSIv0%2BwsLA5qKERn9PT1oVj72kBd489KzIDdK3ZjjbKI04Dr%2BSjfVsqVcR%2BpvDi3tSijLAY7%2FnSvVKkR%2B1wYzwZhCGnV3lKUCcwQo5mnLSVau3lJfSG6qpBOGhIHdeBLdpLiebja1MHQAIm2BJHPzjQNR62%2Fj9CleCyvExvr6bl%2BQEHsSun5N0ewujK29KBWj%2FQwm1IRz7%2FSd4Iiadbgv85HYlNXYdEcuHjnmgKedmosC5ds1CkdSHioAZhIHjtJOpX4ctUSmSL963yXwQAtB4ljZScFc8PgvHri9JV7NjIqMczRBlcnGkENvzPLkwFZWv3O0WDUo0M9DpPBjskYGzAImzkdJpbE9GPzS0%2B4E2Swwr38v5kYjYdznUxMOPjlZmirsjaExIt2cVGWLFKB3O3hAJm7iKKGnX5UsSmC6ar3CPg3ru%2BeBq6tAJ9BM1jDcsVAsKMnHYKXDIHdEwJMVvPbtdZt1aoufn%2B1c8oJjVCVD5fqZNaUK%2BOGf3YxOYi%2FYkQBJyXRnJOiHYjrM5i%2BBAMdAVObiScHA8gIlCXIVN%2FECdZbUyHsaEM4j5cne8FhY%2Bz0ZSgKKcLc0JX%2F0wdkF4wug4A0Ovngb6%2FonPfUTJ3TFqB0kTmTuZPwINF0YOM7SXMOJvbBaJwdBmH4nyzftHuCp27%2FQrjxq8UzGTlPFpYrBWBoJJCZIYJFjINWpgoQdmg5pBiqE8tSwWzyEC6m988egxT6FiIhz7a%2Fxw9fYBD6GxLUaKeUb%2F9YKpWtetIOHGyojZTJlSGkK3sFrg2jhEvTYBhhrEI7oI9MPeUiMOv%2By19wxDZFX1rAUYTuYgYGQGQzxAmr0Cr8yqIzgKQm%2FCxqE2t2VFq1%2B6VLDkPv3j9WoVszYtdbPhVSIXsVKpgnuB0aytVh4ErfQV0MVBagPytRGrq%2Fu%2FvzEu9vZtY2KmgN%2BdTEaxP5Mmj6VDry%2BsQ%2Fm3qZ%2B2mPCxR86uUVeF4YdPRvqf%2FLcCohhIq8qo7VkgyM%2BTWgMGrsg7YfI21Fb0P0eAYUvsul%2BBDN6MOfHyztOzZNso%2Fnjo%2BpFQx%2F2wCqYn4Ev8hbnffwMO5ajyeN63DgYKHXq6nY0gfeBoWBrzoSxFHgfHs%2BEPhQN%2F7ptrr10Iu%2BcoQWEDPzCMKiOnsTylOpDq%2F%2BsBpAYxVQZFVQqEqNoxNss8BqEeM1Uph2IW9rBPVLfSjQznG1%2F9fSPoLwuWA2SKxpEClND7RyJkGmzxSKA30KySqhODgB7ecJHUTdrjJt6DOZPOT5tJIWhIDEUhVvOVnkridJCr9LXZl8geVcRs1jnbE6p3G%2Bc9hboLIRXFwlpD8Yk%2Bhgy1YC66RjY%2F0YOOo6wkJaYF56%2Fm31v%2Bj9im6o787EW9NEUcJcpRhNEjnUttNGy42s0Doi9wjBAtgmWab6dC72Jgw78pp5UorsJPgR75fnNlk8TkYhzZZdw4AEywMVrTFX%2Bdi7k5pUKJYDsLQCmqdlvZliq3IsbQ33u2nQeqkoQ8e%2F0h8qW5guq%2FSJfFn7&__EVENTVALIDATION=9r1WuaAG%2BkAeC9tYBceOkX2GZnizVbBR%2Fodw4bCW6taOC9R1yXsbuoRX%2BD7qvptKB1fnFidmDPD6lc5k0ZoU2jBIPNWiRjyKtLMGD1C%2FVPgBYw3TlYEwrmdg7nBHAlvsS7JHDCgxS1bhscGZQhpQ5W0CetYJoaP3NLzKk5Org7jYArW2OLlv7wiu%2BItMIp988nany9O1V2n8AYmFJUhnDHoZP512XwTCWQE3tJ1%2BhsT3aEvhdAGHK2QA%2Bs68kbJlA3basUzRJRhk0QWs9wex9mRJb7F%2BCGeoyEFmVADSmw%2BQ7xAqHus3Duz%2BoPvFM9EQB8Q8c5gkrJxRzW3I9eiCIGucwrx1AxOcEGxtJvlbjTDqeXTE5Ew8PzOpGkp5ky4%2FS8ijsvraVEI0CDeRUGLW45UvfPGf2ePjKMSu8RQqBcOdBwUaS6agj57Qao%2BjPusfHvqkjjVWYr0CLDFNycQi0XgAE79d3xgNFMh0iMT%2FLLlJ4zuWXNkme1dMdafJIQmlZyZNuh5mZxWqJ%2F9IxTRs%2FntyqDYZN1Mc0rzJb%2Bd6%2F87O%2FePRqXu8mFprskgGaxCSKq%2FKFbn39aZYXGodDwh4tPo8ZoaOqQ6Gzw0nFH1KFhdcnQ2%2FUrYgaA2jy1pozncwTNOZnBA6cTHWPcudqWHKIi9WE759x4e6GMBByqDX%2BE%2FgWmbXs8sNDZXnZC3rdVy3%2F00wA7ziaPgt0tM0QTethJQyiApghZUugzoMkNJZktAXNWG%2B6sDjNkjpUPvEjiUER1HAR%2F87Ab8PvZ3WopenEfgzsD1j5rWo6CLypiyARUyBNbkCqdVSAZkplHY5MwwaKCq%2Fpi6mkIzo3K238QTUzvVMYkB3EuxnUh%2B%2F8ekH%2FNl%2BqMp6MxCawN4bLlXpq4c0KeYC1eV4cx4w0BJX16NOWkw2LBLvEj7T2OPNnl37clWAGbIwS6Y4CUKTUzC%2FGMopgmM8Ze2rR2x498p%2Bfputoqn135U%2BRC2B%2BGsG7rWr9JQWoPMGchHLhSMmpg%2FsVZLOIIMoEtP7akpPjITVhfOTMpGN5sQK3cXG8r3M%2FSeGLDDeIqSs9VhdYQVKtC56CttAFV%2F8RStTda0NlOqINgXDHwvKG5taoKV9NjYYroO6sY9w7nMX6TYzpv9wRh1vJEO8PF084WYUMWU5QQxT1Tq1%2BlKNkBLGwlhuqMLxT6fFrpAJMTNvxm%2F1YGa2%2BjAXjJ4QN54rBO99nXtzvOPIdXBldweMYVLS5E5k0aeDNFX5xfL4uXxEKuFi42iMUOX4T66UVj2lh7DPfZcQEN6CtnYgQbc4JelxFWkn4GSy5jTT3odrw6s3zgKrTKYjSfy2rjszYlTknznwznGzYq2%2FYtfvCNjZUblJHZ8h5VV%2BOvyISGaLaAhbyf%2FN5ofmf9GqdlU%2B5pFJ66KAbYolhK7lrLTZi2v3iQcjHwnA5KlG6mhi1I%2FzfPWpQ%2FCMHLUsLQP90sb8PMUJ2Plz4NIw7HQyl7FRHIyn4ok7JNXi1XX%2F1xkPlub%2FiK4Cri8QMLYzD0mhGfQNSK8Xvf4Np4iWX%2FWtidsMnk7L7sNLen%2FqrajVe98zgqjBUGs3OAKBS8URaznLe%2BBxxGwGpf%2FuDphATb7Z9rQFacRhvzC7QFDW7wAMPKU9TtvCM5NsuNTcdMgmQEVeDY9d&ctl00%24plnMain%24ddlReportCardRuns=${i}-2024&ctl00%24plnMain%24ddlOrderBy=Class`,
+            "body":payload,
             "method": "POST"
         };
         const returnDataArray = await getGrades(stuff, cookies)
@@ -84,10 +141,12 @@ export async function getClasses(cookies) {
     }
     const currentClass = await getGrades({}, cookies)
     let currentQuarter = 0
-    for (let i = 1; i < 5; i++) {
-        if (currentClass[0].lastUpdated == quarters[i - 1][0].lastUpdated) {
-            currentQuarter = i
+    for(let i = 0; i < 4; i++)
+        {
+            if(currentClass[0].lastUpdated == quarters[i][0].lastUpdated)
+                {
+                    currentQuarter = i + 1
+                }
         }
-    }
-    return { "currentQuarter": currentQuarter, "quarters": quarters }
+    return {"currentQuarter":currentQuarter, "quarters":quarters}
 }
